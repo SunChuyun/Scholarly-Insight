@@ -1,0 +1,68 @@
+# Operating system metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# Editor settings and local workspaces
+.vscode/
+.idea/
+.vs/
+.history/
+*.code-workspace
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Python bytecode and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.conda/
+
+# Test, type-checking, and coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+credentials.*.json
+secrets/
+
+# Dependencies and generated builds
+node_modules/
+.vite/
+.next/
+build/
+dist/
+*.egg-info/
+
+# Logs, temporary files, and local databases
+logs/
+*.log
+*.log.*
+*.tmp
+*.bak
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*

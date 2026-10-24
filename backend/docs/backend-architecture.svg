@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="1060" viewBox="0 0 1480 1060" role="img" aria-labelledby="title description">
+  <title id="title">Scholarly Insight backend component architecture</title>
+  <desc id="description">A C4-style component view of the current implementation. An external browser or HTTP client calls the Flask HTTP API in backend/app.py. That module validates requests and calls search_papers in backend/arxiv_client.py within the same Python process. The arXiv client builds paginated queries, spaces requests, calls the external arXiv API over HTTPS, and parses the response. Results and failures return through the same components. Solid arrows indicate requests or function calls; dashed arrows indicate responses, returns, or exceptions.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#475569"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212b; }
+      .heading { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #475569; }
+      .boundary { fill: #fff; stroke: #64748b; stroke-width: 2; stroke-dasharray: 8 5; }
+      .component { fill: #85bbf0; stroke: #5e91c3; stroke-width: 1.6; }
+      .external { fill: #767676; stroke: #626262; stroke-width: 1.6; }
+      .name { font-size: 26px; font-weight: 700; }
+      .type { font-size: 18px; }
+      .file { font-family: Menlo, Consolas, monospace; font-size: 19px; }
+      .responsibility { font-size: 21px; }
+      .white { fill: #fff; }
+      .edge { fill: none; stroke: #475569; stroke-width: 2.2; marker-end: url(#arrow); }
+      .return { stroke-dasharray: 7 5; }
+      .label { font-size: 17px; fill: #334155; text-anchor: middle; }
+      .call-label { font-family: Menlo, Consolas, monospace; font-size: 17px; }
+      .key { font-size: 18px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1480" height="1060" fill="#fff"/>
+  <text x="35" y="44" class="heading">Scholarly Insight backend architecture</text>
+  <text x="35" y="78" class="subtitle">Component diagram | Current implementation</text>
+
+  <rect x="390" y="115" width="700" height="800" class="boundary"/>
+  <text x="415" y="151" font-size="23" font-weight="700">Scholarly Insight backend</text>
+  <text x="415" y="181" font-size="19" fill="#475569">[Container: Python 3.12 / Flask | One application process]</text>
+
+  <g id="api-consumer" text-anchor="middle">
+    <rect x="30" y="250" width="270" height="175" class="external"/>
+    <text x="165" y="289" class="name white">API consumer</text>
+    <text x="165" y="320" class="type white">[External client]</text>
+    <text x="165" y="354" font-size="21" class="white">Browser / HTTP client</text>
+    <text x="165" y="393" font-size="18" class="white">Supplies keywords and page</text>
+  </g>
+
+  <g id="http-api" text-anchor="middle">
+    <rect x="435" y="215" width="610" height="230" class="component"/>
+    <text x="740" y="255" class="name">HTTP API (Flask App)</text>
+    <text x="740" y="286" class="type">[Component: Python / Flask / Flask-CORS]</text>
+    <text x="740" y="319" class="file">backend/app.py</text>
+    <text x="740" y="365" class="responsibility">Routes requests; validates keywords and page</text>
+    <text x="740" y="394" class="responsibility">Allows cross-origin browser access</text>
+    <text x="740" y="423" class="responsibility">Returns HTTP responses and error statuses</text>
+  </g>
+
+  <g id="arxiv-client" text-anchor="middle">
+    <rect x="435" y="640" width="610" height="235" class="component"/>
+    <text x="740" y="680" class="name">arXiv Client</text>
+    <text x="740" y="711" class="type">[Component: Python / Requests / ElementTree]</text>
+    <text x="740" y="744" class="file">backend/arxiv_client.py</text>
+    <text x="740" y="785" class="responsibility">Builds keyword queries and pages of 20 papers</text>
+    <text x="740" y="814" class="responsibility">Parses results; maps upstream failures</text>
+    <text x="740" y="850" font-size="20">Request interval: at least 3 s | HTTP timeout: 30 s</text>
+  </g>
+
+  <g id="arxiv-api" text-anchor="middle">
+    <rect x="1185" y="675" width="265" height="175" class="external"/>
+    <text x="1317.5" y="714" class="name white">arXiv API</text>
+    <text x="1317.5" y="744" font-size="17" class="white">[External software system]</text>
+    <text x="1317.5" y="777" font-size="20" class="white">export.arxiv.org/api/query</text>
+    <text x="1317.5" y="817" font-size="19" class="white">Paper search and ranking</text>
+  </g>
+
+  <g id="inbound-http">
+    <rect x="303" y="251" width="129" height="47" fill="#fff"/>
+    <rect x="303" y="357" width="129" height="25" fill="#fff"/>
+    <text x="367.5" y="270" class="label">GET /api/search</text>
+    <text x="367.5" y="292" class="label">[HTTP]</text>
+    <path d="M300 305 H435" class="edge"/>
+    <text x="367.5" y="375" class="label">HTTP response</text>
+    <path d="M435 395 H300" class="edge return"/>
+  </g>
+
+  <g id="python-call">
+    <path d="M585 445 V640" class="edge"/>
+    <rect x="452" y="509" width="266" height="67" fill="#fff"/>
+    <text x="585" y="532" class="label call-label">search_papers(query, page)</text>
+    <text x="585" y="559" class="label">[Python function call]</text>
+    <path d="M895 640 V445" class="edge return"/>
+    <rect x="758" y="509" width="274" height="67" fill="#fff"/>
+    <text x="895" y="532" class="label call-label">Results / ArxivError</text>
+    <text x="895" y="559" class="label">[Python return / exception]</text>
+  </g>
+
+  <g id="outbound-https">
+    <rect x="1048" y="650" width="134" height="47" fill="#fff"/>
+    <rect x="1048" y="780" width="134" height="25" fill="#fff"/>
+    <text x="1115" y="668" class="label">GET /api/query</text>
+    <text x="1115" y="691" class="label">[HTTPS]</text>
+    <path d="M1045 705 H1185" class="edge"/>
+    <text x="1115" y="798" class="label">HTTP response</text>
+    <path d="M1185 820 H1045" class="edge return"/>
+  </g>
+
+  <line x1="35" y1="942" x2="1445" y2="942" stroke="#cbd5e1"/>
+  <text x="35" y="977" font-size="19" font-weight="700">Key</text>
+  <rect x="120" y="961" width="25" height="20" class="component"/>
+  <text x="158" y="978" class="key">Backend component</text>
+  <rect x="440" y="961" width="25" height="20" class="external"/>
+  <text x="478" y="978" class="key">External caller or service</text>
+  <rect x="815" y="961" width="35" height="20" class="boundary"/>
+  <text x="865" y="978" class="key">Python process boundary</text>
+  <path d="M120 1017 H175" class="edge"/>
+  <text x="193" y="1023" class="key">Request / function call</text>
+  <path d="M600 1017 H655" class="edge return"/>
+  <text x="673" y="1023" class="key">Response / return / exception</text>
+</svg>
